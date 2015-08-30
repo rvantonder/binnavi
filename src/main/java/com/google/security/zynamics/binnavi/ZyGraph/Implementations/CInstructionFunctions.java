@@ -19,6 +19,7 @@ import java.awt.Window;
 
 import com.google.security.zynamics.binnavi.CUtilityFunctions;
 import com.google.security.zynamics.binnavi.Gui.ReilInstructionDialog.CReilInstructionDialog;
+import com.google.security.zynamics.binnavi.Gui.ReilInstructionDialog.CBilInstructionDialog; // TODO seperate to Bil package
 import com.google.security.zynamics.binnavi.Gui.errordialog.NaviErrorDialog;
 import com.google.security.zynamics.binnavi.disassembly.INaviCodeNode;
 import com.google.security.zynamics.binnavi.disassembly.INaviInstruction;
@@ -36,7 +37,7 @@ public final class CInstructionFunctions {
 
   /**
    * Shows the REIL code for a code node.
-   * 
+   *
    * @param parent Parent window used for dialogs.
    * @param codeNode The code node whose REIL code is shown.
    */
@@ -61,7 +62,7 @@ public final class CInstructionFunctions {
 
   /**
    * Shows the REIL code of a single instruction.
-   * 
+   *
    * @param parent Parent window used for dialogs.
    * @param instruction The instruction whose REIL code is shown.
    */
@@ -82,4 +83,55 @@ public final class CInstructionFunctions {
       NaviErrorDialog.show(parent, message, description, exception);
     }
   }
+
+  /**
+   * Shows the BIL code for a code node.
+   *
+   * @param parent Parent window used for dialogs.
+   * @param codeNode The code node whose BIL code is shown.
+   */
+  public static void showBilCode(final Window parent, final INaviCodeNode codeNode) {
+    try {
+      CBilInstructionDialog.show(parent, codeNode);
+    } catch (final InternalTranslationException exception) {
+      CUtilityFunctions.logException(exception);
+
+      final String message = "E00XXX: " + "Could not show BIL code";
+      final String description =
+          CUtilityFunctions.createDescription(
+              String.format("BinNavi could not show the BIL code of node at '%X'.",
+                  codeNode.getAddress()),
+              new String[] {"The node could not be converted to BIL code."},
+              new String[] {"You can not fix this problem yourself. Please contact the "
+                  + "BinNavi support."}); // TODO
+
+      NaviErrorDialog.show(parent, message, description, exception);
+    }
+  }
+
+  /**
+   * Shows the BIL code of a single instruction.
+   *
+   * @param parent Parent window used for dialogs.
+   * @param instruction The instruction whose BIL code is shown.
+   */
+    /** TODO per instruction
+  public static void showBilCode(final Window parent, final INaviInstruction instruction) {
+    try {
+      CBilInstructionDialog.show(parent, instruction);
+    } catch (final InternalTranslationException exception) {
+      CUtilityFunctions.logException(exception);
+
+      final String message = "E00035: " + "Could not show BIL code";
+      final String description =
+          CUtilityFunctions.createDescription(String.format(
+              "BinNavi could not show the BIL code of instruction '%s'.", instruction.toString()),
+              new String[] {"The instruction could not be converted to BIL code."},
+              new String[] {"You can not fix this problem yourself. Please contact the "
+                  + "BinNavi support."});
+
+      NaviErrorDialog.show(parent, message, description, exception);
+    }
+  }
+  */
 }

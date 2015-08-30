@@ -22,6 +22,7 @@ import com.google.security.zynamics.binnavi.Gui.Actions.CActionProxy;
 import com.google.security.zynamics.binnavi.Gui.GraphWindows.CGraphModel;
 import com.google.security.zynamics.binnavi.Gui.GraphWindows.Extensions.ICodeNodeExtension;
 import com.google.security.zynamics.binnavi.ZyGraph.Menus.Actions.CActionShowReilCodeNode;
+import com.google.security.zynamics.binnavi.ZyGraph.Menus.Actions.CActionShowBilCodeNode;
 import com.google.security.zynamics.binnavi.ZyGraph.Menus.Actions.CChangeFunctionNameAction;
 import com.google.security.zynamics.binnavi.ZyGraph.Menus.Actions.COpenOriginalFunction;
 import com.google.security.zynamics.binnavi.ZyGraph.Menus.Actions.CRemoveFromGroupAction;
@@ -116,6 +117,8 @@ public final class CCodeNodeMenu extends JPopupMenu {
     addSeparator();
     add(CActionProxy.proxy(
         new CActionShowReilCodeNode(model.getParent(), (INaviCodeNode) node.getRawNode())));
+    add(CActionProxy.proxy(
+        new CActionShowBilCodeNode(model.getParent(), (INaviCodeNode) node.getRawNode())));
     if (instruction != null) {
       addSeparator();
       add(new CInstructionMenu(model, node, instruction, extensions));
