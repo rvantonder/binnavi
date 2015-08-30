@@ -10,19 +10,20 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-
-
 public class Init {
+	
+	protected static String port = "4444";
+	protected static String host = "http://127.0.0.1";
+	protected static String method = "POST";
 	
 	public static void sendInitRequest() {
 		String data = "{\"init\": {\"version\": \"0.1\"}, \"id\": \"1\"}";
 		byte[] postData = data.getBytes(StandardCharsets.UTF_8);
-		String host = "http://127.0.0.1:4444";
 		try {
-			URL    url            = new URL( host );
+			URL    url            = new URL(String.format("%s:%s", host, port));
 			HttpURLConnection conn= (HttpURLConnection) url.openConnection();    
 			conn.setDoOutput( true );
-			conn.setRequestMethod( "POST" );
+			conn.setRequestMethod(method);
 			conn.setRequestProperty( "Content-Type", "application/json");
 			conn.setRequestProperty( "charset", "utf-8");
 			DataOutputStream wr = new DataOutputStream( conn.getOutputStream());
