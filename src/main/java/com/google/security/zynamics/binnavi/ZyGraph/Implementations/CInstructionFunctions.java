@@ -18,8 +18,8 @@ package com.google.security.zynamics.binnavi.ZyGraph.Implementations;
 import java.awt.Window;
 
 import com.google.security.zynamics.binnavi.CUtilityFunctions;
+import com.google.security.zynamics.binnavi.Gui.BilInstructionDialog.CBilInstructionDialog;
 import com.google.security.zynamics.binnavi.Gui.ReilInstructionDialog.CReilInstructionDialog;
-import com.google.security.zynamics.binnavi.Gui.ReilInstructionDialog.CBilInstructionDialog; // TODO seperate to Bil package
 import com.google.security.zynamics.binnavi.Gui.errordialog.NaviErrorDialog;
 import com.google.security.zynamics.binnavi.disassembly.INaviCodeNode;
 import com.google.security.zynamics.binnavi.disassembly.INaviInstruction;

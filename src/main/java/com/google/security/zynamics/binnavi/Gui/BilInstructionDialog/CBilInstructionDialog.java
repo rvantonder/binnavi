@@ -13,10 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package com.google.security.zynamics.binnavi.Gui.ReilInstructionDialog; // TODO own package
+package com.google.security.zynamics.binnavi.Gui.BilInstructionDialog; // TODO own package
 
 import com.google.common.collect.Lists;
 import com.google.security.zynamics.binnavi.Gui.Actions.CActionProxy;
+import com.google.security.zynamics.binnavi.Gui.BilInstructionDialog.CActionCopyAllBilCode;
+import com.google.security.zynamics.binnavi.Gui.BilInstructionDialog.CBilInstructionDialogMenu;
 import com.google.security.zynamics.binnavi.ZyGraph.Implementations.CNodeFunctions;
 import com.google.security.zynamics.binnavi.disassembly.INaviCodeNode;
 import com.google.security.zynamics.binnavi.disassembly.INaviInstruction;
@@ -140,7 +142,7 @@ public final class CBilInstructionDialog extends JDialog {
    */
   public static void show(final Window parent, final INaviCodeNode node)
       throws InternalTranslationException {
-    // IMPLEMENT HERE
+	  edu.cmu.bap.client.Init.sendInitRequest();
 
     // final BilGraph graph = CNodeFunctions.copyBilCode(parent, node);
     final String title = String.format("BIL code of %s", node.getAddress().toHexString());
@@ -215,7 +217,7 @@ public final class CBilInstructionDialog extends JDialog {
   private void addMenuBar() {
     final JMenu menu = new JMenu("BIL Code");
     final JMenuItem copyItem =
-        new JMenuItem(CActionProxy.proxy(new CActionCopyAllReilCode(m_textArea))); // TODO
+        new JMenuItem(CActionProxy.proxy(new CActionCopyAllBilCode(m_textArea))); // TODO
     menu.add(copyItem);
 
     final JMenuBar menuBar = new JMenuBar();
@@ -236,7 +238,7 @@ public final class CBilInstructionDialog extends JDialog {
      */
     private void maybeShowPopup(final MouseEvent event) {
       if (event.isPopupTrigger()) {
-        new CReilInstructionDialogMenu(m_textArea).show(                        // TODO cleanup
+        new CBilInstructionDialogMenu(m_textArea).show(                        // TODO cleanup
             event.getComponent(), event.getX(), event.getY());
       }
     }
