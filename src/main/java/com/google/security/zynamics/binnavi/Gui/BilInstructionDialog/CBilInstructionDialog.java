@@ -31,6 +31,8 @@ import com.google.security.zynamics.reil.translators.InternalTranslationExceptio
 //import com.google.security.zynamics.reil.translators.StandardEnvironment;
 import com.google.security.zynamics.zylib.gui.GuiHelper;
 
+import edu.cmu.bap.client.BapClient;
+
 import java.awt.BorderLayout;
 import java.awt.Window;
 import java.awt.event.MouseAdapter;
@@ -142,7 +144,8 @@ public final class CBilInstructionDialog extends JDialog {
    */
   public static void show(final Window parent, final INaviCodeNode node)
       throws InternalTranslationException {
-	  edu.cmu.bap.client.Init.sendInitRequest();
+	  
+	  BapClient.getInstance().init();
 
     // final BilGraph graph = CNodeFunctions.copyBilCode(parent, node);
     final String title = String.format("BIL code of %s", node.getAddress().toHexString());
@@ -150,34 +153,34 @@ public final class CBilInstructionDialog extends JDialog {
     // final String text = reilGraphToText(graph);
     StringBuilder text = new StringBuilder();
 
-    for (IInstruction i : node.getInstructions()) {
-        byte[] b = i.getData();
-        StringBuilder sb = new StringBuilder();
-        for (byte bb : b) {
-            sb.append(String.format("%02x", bb));
-        }
-        System.out.println("Hex: " + sb.toString());
-
-        StringBuffer output = new StringBuffer();
-        Process p;
-        try {
-            p = Runtime.getRuntime().exec("bap-mc " + sb.toString() + " --show-bil --arch=x86");
-            p.waitFor();
-            BufferedReader reader =
-                new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-            String line = "";
-            while ((line = reader.readLine())!= null) {
-                output.append(line + "\n");
-            }
-        } catch (Exception e) {
-                e.printStackTrace();
-                // text = "Error: Unable to get BIL code"; // TODO
-        }
-
-        System.out.println("Result: " + output.toString());
-        text.append(normalize(output.toString()) + "\n");
-    }
+//    for (IInstruction i : node.getInstructions()) {
+//        byte[] b = i.getData();
+//        StringBuilder sb = new StringBuilder();
+//        for (byte bb : b) {
+//            sb.append(String.format("%02x", bb));
+//        }
+//        System.out.println("Hex: " + sb.toString());
+//
+//        StringBuffer output = new StringBuffer();
+//        Process p;
+//        try {
+//            p = Runtime.getRuntime().exec("bap-mc " + sb.toString() + " --show-bil --arch=x86");
+//            p.waitFor();
+//            BufferedReader reader =
+//                new BufferedReader(new InputStreamReader(p.getInputStream()));
+//
+//            String line = "";
+//            while ((line = reader.readLine())!= null) {
+//                output.append(line + "\n");
+//            }
+//        } catch (Exception e) {
+//                e.printStackTrace();
+//                // text = "Error: Unable to get BIL code"; // TODO
+//        }
+//
+//        System.out.println("Result: " + output.toString());
+//        text.append(normalize(output.toString()) + "\n");
+//    }
 
     final CBilInstructionDialog dialog = new CBilInstructionDialog(parent, title, text.toString());
 
