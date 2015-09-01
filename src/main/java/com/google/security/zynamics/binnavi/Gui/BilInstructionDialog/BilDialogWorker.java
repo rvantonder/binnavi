@@ -33,6 +33,10 @@ public class BilDialogWorker extends SwingWorker<String, Integer> {
 	protected String doInBackground() throws Exception {
 		BapClient.getInstance().init();
 		Image img = BapClient.getInstance().getImage("/home/vagrant/coreutils_O0_ls");
+		System.out.println("Img resource: " + img.toString());
+		System.out.println("Segments: " + img.getSegments().toString());
+        System.out.println("First segment: " + img.getSegments().get(0).toString());
+        System.out.println("First symbol: " + img.getSegments().get(0).getSymbols().get(0).toString());
 		return img.getResourceId()+"";
 	}
 

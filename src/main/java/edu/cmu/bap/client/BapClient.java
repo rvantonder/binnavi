@@ -103,6 +103,8 @@ public class BapClient {
 	}
 
 	public JSONObject asyncRequest(JSONObject request) {
+		lastId += 1;
+		request.put("id", Integer.toString(lastId));
 		CompletableFuture<JSONObject> f = CompletableFuture.supplyAsync(() -> asyncRequestTask(request), threadPool);
 
 		JSONObject res = null;
@@ -123,8 +125,7 @@ public class BapClient {
 		JSONObject version = new JSONObject();
 		version.put("version", "0.1");
 		init.put("init", version);
-		lastId += 1;
-		init.put("id", Integer.toString(lastId));
+		
 		return asyncRequest(init);
 	}
 
@@ -132,8 +133,6 @@ public class BapClient {
 		JSONObject loadFileRequest = new JSONObject();
 		JSONObject url = new JSONObject();
 		loadFileRequest.put("load_file", url.put("url", "file://" + fileName));
-		lastId += 1;
-		loadFileRequest.put("id", Integer.toString(lastId));
 
 		return asyncRequest(loadFileRequest);
 	}
@@ -141,8 +140,7 @@ public class BapClient {
 	public JSONObject getResource(int resourceId) {
 		JSONObject getResource = new JSONObject();
 		getResource.put("get_resource", Integer.toString(resourceId));
-		lastId += 1;
-		getResource.put("id", Integer.toString(lastId));
+
 		return asyncRequest(getResource);
 	}
 
