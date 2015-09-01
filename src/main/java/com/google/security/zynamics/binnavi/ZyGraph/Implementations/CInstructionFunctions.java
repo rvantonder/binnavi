@@ -18,7 +18,7 @@ package com.google.security.zynamics.binnavi.ZyGraph.Implementations;
 import java.awt.Window;
 
 import com.google.security.zynamics.binnavi.CUtilityFunctions;
-import com.google.security.zynamics.binnavi.Gui.BilInstructionDialog.CBilInstructionDialog;
+import com.google.security.zynamics.binnavi.Gui.BilInstructionDialog.BilDialogWorker;
 import com.google.security.zynamics.binnavi.Gui.ReilInstructionDialog.CReilInstructionDialog;
 import com.google.security.zynamics.binnavi.Gui.errordialog.NaviErrorDialog;
 import com.google.security.zynamics.binnavi.disassembly.INaviCodeNode;
@@ -91,22 +91,7 @@ public final class CInstructionFunctions {
    * @param codeNode The code node whose BIL code is shown.
    */
   public static void showBilCode(final Window parent, final INaviCodeNode codeNode) {
-    try {
-      CBilInstructionDialog.show(parent, codeNode);
-    } catch (final InternalTranslationException exception) {
-      CUtilityFunctions.logException(exception);
-
-      final String message = "E00XXX: " + "Could not show BIL code";
-      final String description =
-          CUtilityFunctions.createDescription(
-              String.format("BinNavi could not show the BIL code of node at '%X'.",
-                  codeNode.getAddress()),
-              new String[] {"The node could not be converted to BIL code."},
-              new String[] {"You can not fix this problem yourself. Please contact the "
-                  + "BinNavi support."}); // TODO
-
-      NaviErrorDialog.show(parent, message, description, exception);
-    }
+	  new BilDialogWorker(parent, codeNode).execute();
   }
 
   /**

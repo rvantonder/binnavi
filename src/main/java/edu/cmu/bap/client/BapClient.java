@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,6 +36,8 @@ public class BapClient {
 
 	private ExecutorService threadPool;
 
+	int lastId;
+
 	public static BapClient getInstance() {
 		if (bapClientInstance == null) { // TODO implement singleton with enum
 			bapClientInstance = new BapClient();
@@ -42,6 +46,7 @@ public class BapClient {
 	}
 
 	private BapClient() {
+		lastId = 0;
 		try {
 			threadPool = Executors.newCachedThreadPool();
 			bapServerUrl = new URL(PROTO, HOST, PORT, "");
@@ -52,70 +57,97 @@ public class BapClient {
 		}
 	}
 
-	private class HttpPostTask implements Runnable {
-		private JSONObject request;
+	// TODO private?
+	public JSONObject asyncRequestTask(JSONObject request) {
+		DataOutputStream out;
+		BufferedReader in;
+		HttpURLConnection conn;
 
-		private HttpURLConnection conn;
+		JSONObject jsonResult = null;
 
-		public HttpPostTask(JSONObject request) {
-			this.request = request;
+		try {
+			conn = (HttpURLConnection) bapServerUrl.openConnection();
+
+			conn.setDoOutput(true);
+			conn.setRequestMethod(HTTP_METHOD_POST);
+			conn.setRequestProperty(HTTP_HEADER_CONTENT_TYPE, HTTP_CONTENT_TYPE_JSON);
+			conn.setRequestProperty("charset", HTTP_CHARSET_UTF8);
+			out = new DataOutputStream(conn.getOutputStream());
+			System.out.println("Writing " + request.toString());
+			out.write(request.toString().getBytes());
+
+			in = new BufferedReader(new InputStreamReader(conn.getInputStream(), HTTP_CHARSET_UTF8));
+			System.out.println("Output start");
+
+			StringBuilder result = new StringBuilder();
+			String line = "";
+			while ((line = in.readLine()) != null) {
+				System.out.println(line);
+				result.append(line);
+			}
+			in.close();
+			out.close();
+
+			jsonResult = new JSONObject(result.toString());
+		}
+		catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
-		@Override
-		public void run() {
-			DataOutputStream out;
-			BufferedReader in;
-
-			try {
-				conn = (HttpURLConnection) bapServerUrl.openConnection();
-
-				conn.setDoOutput(true);
-				conn.setRequestMethod(HTTP_METHOD_POST);
-				conn.setRequestProperty(HTTP_HEADER_CONTENT_TYPE, HTTP_CONTENT_TYPE_JSON);
-				conn.setRequestProperty("charset", HTTP_CHARSET_UTF8);
-				out = new DataOutputStream(conn.getOutputStream());
-				System.out.println("Writing " + request.toString());
-				out.write(request.toString().getBytes());
-
-				in = new BufferedReader(new InputStreamReader(conn.getInputStream(), HTTP_CHARSET_UTF8));
-				System.out.println("Output start");
-				
-				StringBuilder result = new StringBuilder();
-				String line = "";
-				while ((line = in.readLine()) != null) {
-					System.out.println(line);
-					result.append(line);
-				}
-				in.close();
-				out.close();
-				
-				JSONObject jsonResult = new JSONObject(result.toString());
-				handleResponse("init", jsonResult);
-			}
-			catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	private void handleResponse(String s, JSONObject jsonResult) {
-		switch (s) {
-		case "init":
-			System.out.println("Capabilities: " + jsonResult.getString("id"));
-		}
+		return jsonResult;
 	}
 
-	public void init() {
+	public JSONObject asyncRequest(JSONObject request) {
+		CompletableFuture<JSONObject> f = CompletableFuture.supplyAsync(() -> asyncRequestTask(request), threadPool);
+
+		JSONObject res = null;
+		try {
+			res = f.get();
+		}
+		catch (InterruptedException | ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return res;
+	}
+
+	// API start
+
+	public JSONObject init() {
 		JSONObject init = new JSONObject();
 		JSONObject version = new JSONObject();
 		version.put("version", "0.1");
 		init.put("init", version);
-		init.put("id", "1");
-		threadPool.execute(new HttpPostTask(init));
+		lastId += 1;
+		init.put("id", Integer.toString(lastId));
+		return asyncRequest(init);
+	}
+
+	public JSONObject loadFile(String fileName) {
+		JSONObject loadFileRequest = new JSONObject();
+		JSONObject url = new JSONObject();
+		loadFileRequest.put("load_file", url.put("url", "file://" + fileName));
+		lastId += 1;
+		loadFileRequest.put("id", Integer.toString(lastId));
+
+		return asyncRequest(loadFileRequest);
+	}
+
+	public JSONObject getResource(int resourceId) {
+		JSONObject getResource = new JSONObject();
+		getResource.put("get_resource", Integer.toString(resourceId));
+		lastId += 1;
+		getResource.put("id", Integer.toString(lastId));
+		return asyncRequest(getResource);
+	}
+
+	public Image getImage(String fileName) {
+		JSONObject res = loadFile(fileName);
+		return new Image(fileName, Integer.parseInt(res.getString("resource")));
 	}
 }

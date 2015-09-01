@@ -37,6 +37,6 @@ public final class CBilInstructionDialogMenu extends JPopupMenu {
    * @param textArea Text area in which the REIL code is shown.
    */
   public CBilInstructionDialogMenu(final JTextArea textArea) {
-    add(new JMenuItem(new CActionCopyReilCode(textArea)));
+    add(new JMenuItem(new CActionCopyReilCode(textArea))); // TODO bil
   }
 }
