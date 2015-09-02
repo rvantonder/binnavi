@@ -34,14 +34,11 @@ public class BilDialogWorker extends SwingWorker<String, Integer> {
 	protected String doInBackground() throws Exception {
 		BapClient.getInstance().init();
 		Image img = BapClient.getInstance().getImage("/home/vagrant/scc32");
-		System.out.println("Img resource: " + img.toString());
-		System.out.println("Segments: " + img.getSegments().toString());
-		//System.out.println("Cheap: " + img.getSegments().get(0).getInsns().toString());
-		System.out.println("Main: " + img.findSymbol("main").getInsns());
-		String text = InsnsParser.parseBil(img.findSymbol("main").getInsns());
-        //System.out.println("First segment: " + img.getSegments().get(0).toString());
-        //System.out.println("Insns first sym: " + img.getSegments().get(0).getSymbols().get(0).getIsns().toString());
-        //System.out.println("First symbol: " + img.getSegments().get(0).getSymbols().get(0).toString());
+		//System.out.println("Img resource: " + img.toString());
+		//System.out.println("Segments: " + img.getSegments().toString());
+		//System.out.println("Main: " + img.findSymbol("main").getInsns());
+		String nodeFunctionName = codeNode.getParentFunction().getName();
+		String text = InsnsParser.parseBil(img.findSymbol(nodeFunctionName).getInsns());
 		return text;
 	}
 
