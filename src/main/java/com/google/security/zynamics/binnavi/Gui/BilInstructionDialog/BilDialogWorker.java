@@ -12,6 +12,7 @@ import com.google.security.zynamics.reil.translators.InternalTranslationExceptio
 
 import edu.cmu.bap.client.BapClient;
 import edu.cmu.bap.client.Image;
+import edu.cmu.bap.client.InsnsParser;
 
 /**
  * This is a dialog for displaying BIL. We don't want it to block the main
@@ -32,12 +33,16 @@ public class BilDialogWorker extends SwingWorker<String, Integer> {
 	@Override
 	protected String doInBackground() throws Exception {
 		BapClient.getInstance().init();
-		Image img = BapClient.getInstance().getImage("/home/vagrant/coreutils_O0_ls");
+		Image img = BapClient.getInstance().getImage("/home/vagrant/scc32");
 		System.out.println("Img resource: " + img.toString());
 		System.out.println("Segments: " + img.getSegments().toString());
-        System.out.println("First segment: " + img.getSegments().get(0).toString());
-        System.out.println("First symbol: " + img.getSegments().get(0).getSymbols().get(0).toString());
-		return img.getResourceId()+"";
+		//System.out.println("Cheap: " + img.getSegments().get(0).getInsns().toString());
+		System.out.println("Main: " + img.findSymbol("main").getInsns());
+		String text = InsnsParser.parseBil(img.findSymbol("main").getInsns());
+        //System.out.println("First segment: " + img.getSegments().get(0).toString());
+        //System.out.println("Insns first sym: " + img.getSegments().get(0).getSymbols().get(0).getIsns().toString());
+        //System.out.println("First symbol: " + img.getSegments().get(0).getSymbols().get(0).toString());
+		return text;
 	}
 
 	@Override

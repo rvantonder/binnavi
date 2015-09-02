@@ -15,7 +15,6 @@ public class Segment extends Resource {
 	public List<Symbol> getSymbols() {
 		if (symbols == null) {
 			JSONArray array = getResource().getJSONArray("symbols");
-			System.out.println("Size: " + array.length());
 			// call getResource on each of the ids
 			// create Segment objects and add to this list
 			symbols = new LinkedList<Symbol>();

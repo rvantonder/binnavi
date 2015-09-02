@@ -143,6 +143,16 @@ public class BapClient {
 
 		return asyncRequest(getResource);
 	}
+	
+	public JSONObject getInsns(int resourceId) {
+		JSONObject getInsns = new JSONObject();
+		JSONObject resourceAndOptions = new JSONObject();
+		resourceAndOptions.put("resource", Integer.toString(resourceId));
+		resourceAndOptions.put("arch", "x86");
+		getInsns.put("get_insns", resourceAndOptions);
+		
+		return asyncRequest(getInsns);
+	}
 
 	public Image getImage(String fileName) {
 		JSONObject res = loadFile(fileName);

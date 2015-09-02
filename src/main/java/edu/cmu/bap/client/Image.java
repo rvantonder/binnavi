@@ -48,4 +48,15 @@ public class Image extends Resource {
 		
 		return symbols;
 	}
+	
+	public Symbol findSymbol(String symbolName) {
+		Symbol res = null;
+		for (Segment seg : getSegments()) {
+			for (Symbol sym : seg.getSymbols()) {
+					if (sym.getResource().get("name").equals(symbolName))
+					res = sym;
+			}
+		}
+		return res;
+	}
 }
